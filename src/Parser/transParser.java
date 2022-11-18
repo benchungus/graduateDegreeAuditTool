@@ -46,40 +46,46 @@ public class transParser {
 
     //scanner
     File trans;
+    String fname;
 
-    public transParser() {}
+    public transParser(String f) {
+        fname = f;
+    }
 
     public void read(String fname) {
         trans = new File(fname);
-        try {
-            Scanner in = new Scanner(trans);
+        try{
+            Scanner first = new Scanner(trans);
             String line;
             String[] lineArr;
-            // lineArr = scanTill(in, "Name:", 0);
-            // studentName = scanEnd(lineArr, 1, 0);
-            // System.out.println(studentName);
-            // lineArr = scanTill(in, "ID:", 1);
+            //scanning for name and ID
+            first.nextLine();
+            line = first.nextLine();
+            lineArr = line.split(" ");
+            studentName = scanEnd(lineArr, 1, 0);
+            lineArr = scanTill(first, "ID:", 1);
+            studentId = lineArr[2];
+            //scanning for external degrees
+            Scanner in = new Scanner(trans);
             line = checkPageEnd(in);
             lineArr = line.split(" ");
-            studentId = lineArr[2];
             lineArr = scanTill(in, "External", 0);
             line = checkPageEnd(in);
-            while (!line.equals("Beginning of Graduate Record")) {
+            while(!line.equals("Academic Program History")){
                 school = line;
                 line = checkPageEnd(in);
                 lineArr = line.split(" ");
-                dateFinished = lineArr[lineArr.length - 1];
-                checkPageEnd(in);
-                checkPageEnd(in);
-                checkPageEnd(in);
-                line = checkPageEnd(in);
-                lineArr = line.split(" ");
-                degreeName = scanEnd(lineArr, 1, 0);
-                checkPageEnd(in);
+                dateFinished = lineArr[lineArr.length-1];
+                degreeName = scanEnd(lineArr, 0, 1);
                 line = checkPageEnd(in);
                 exDegs.add(new externalDeg(school, degreeName, dateFinished));
             }
-            while (!line.equals("Graduate Career Totals")) {
+            //skip the details
+            while(!line.equals("Beginning of Graduate Record")){
+                line = checkPageEnd(in);
+            }
+            //grab all semesters
+            while(!line.equals("Graduate Career Totals")){
                 line = checkPageEnd(in);
                 lineArr = line.split(" ");
                 year = lineArr[0];
@@ -88,17 +94,19 @@ public class transParser {
                 line = checkPageEnd(in);
                 lineArr = line.split(" ");
                 courses = new ArrayList<>();
-                while (!line.equals("Attempted Earned GPA Uts Points")) {
+                //grab all courses for semester
+                while(!line.equals("Attempted Earned GPA Uts Points")){
                     number = lineArr[0] + " " + lineArr[1];
                     int aL = lineArr.length;
-                    points = lineArr[aL - 1];
-                    if (Character.isLetter(lineArr[aL - 2].charAt(0))) {
-                        earned = lineArr[aL - 3];
-                        attempted = lineArr[aL - 4];
+                    points = lineArr[aL-1];
+                    if(Character.isLetter(lineArr[aL-2].charAt(0))){
+                        earned = lineArr[aL-3];
+                        attempted = lineArr[aL-4];
                         courseName = scanEnd(lineArr, 2, 4);
-                    } else {
-                        earned = lineArr[aL - 2];
-                        attempted = lineArr[aL - 3];
+                    }
+                    else{
+                        earned = lineArr[aL-2];
+                        attempted = lineArr[aL-3];
                         courseName = scanEnd(lineArr, 2, 3);
                     }
                     line = checkPageEnd(in);
@@ -107,21 +115,24 @@ public class transParser {
                     instructors.add(scanEnd(lineArr, 1, 0));
                     line = checkPageEnd(in);
                     lineArr = line.split(" ");
-                    while (Character.isLetter(lineArr[lineArr.length - 1].charAt(0)) && !line.equals("Attempted Earned GPA Uts Points")) {
+                    //grab all instructors for course
+                    while(Character.isLetter(lineArr[lineArr.length-1].charAt(0)) && !line.equals("Attempted Earned GPA Uts Points")){
                         instructors.add(line);
                         line = checkPageEnd(in);
                         lineArr = line.split(" ");
                     }
                     courses.add(new course(courseName, number, instructors, attempted, earned, points));
                 }
+                //get all gpa for semester 
                 line = checkPageEnd(in);
                 lineArr = line.split(" ");
                 term = new gpa("Term", lineArr[2], lineArr[5], lineArr[6], lineArr[7], lineArr[8]);
                 line = checkPageEnd(in);
                 lineArr = line.split(" ");
-                if (Character.isLetter(lineArr[3].charAt(0))) {
+                if(Character.isLetter(lineArr[3].charAt(0))){
                     transfer = new gpa("Transfer Term", "0", lineArr[5], lineArr[6], lineArr[7], lineArr[8]);
-                } else {
+                }
+                else{
                     transfer = new gpa("Transfer Term", lineArr[3], lineArr[6], lineArr[7], lineArr[8], lineArr[9]);
                 }
                 line = checkPageEnd(in);
@@ -132,9 +143,10 @@ public class transParser {
                 cum = new gpa("Cum", lineArr[2], lineArr[5], lineArr[6], lineArr[7], lineArr[8]);
                 line = checkPageEnd(in);
                 lineArr = line.split(" ");
-                if (Character.isLetter(lineArr[3].charAt(0))) {
+                if(Character.isLetter(lineArr[3].charAt(0))){
                     transCum = new gpa("Transfer Cum", "0", lineArr[5], lineArr[6], lineArr[7], lineArr[8]);
-                } else {
+                }
+                else{
                     transCum = new gpa("Transfer Cum", lineArr[3], lineArr[6], lineArr[7], lineArr[8], lineArr[9]);
                 }
                 line = checkPageEnd(in);
@@ -143,7 +155,26 @@ public class transParser {
                 line = checkPageEnd(in);
                 sems.add(new semester(year, season, courses, term, transfer, combined, cum, transCum, combinedCum));
             }
-        } catch (FileNotFoundException e) {
+            //getting all gpa totals for the end
+            line = checkPageEnd(in);
+            lineArr = line.split(" ");
+            totCumGpa = new gpa("Tot Cum", lineArr[2], lineArr[5], lineArr[6], lineArr[7], lineArr[8]);
+            line = checkPageEnd(in);
+            lineArr = line.split(" ");
+            if(Character.isLetter(lineArr[3].charAt(0))){
+                totTransGpa = new gpa("Tot Transfer Cum", "0", lineArr[5], lineArr[6], lineArr[7], lineArr[8]);
+            }
+            else{
+                totTransGpa = new gpa("Tot Transfer Cum", lineArr[3], lineArr[6], lineArr[7], lineArr[8], lineArr[9]);
+            }
+            line = checkPageEnd(in);
+            lineArr = line.split(" ");
+            totCombGpa = new gpa("Tot Combined Cum", lineArr[3], lineArr[6], lineArr[7], lineArr[8], lineArr[9]);
+            transcript t = new transcript(studentName, studentId, exDegs, sems, totCumGpa, totTransGpa, totCombGpa);
+            //UNCOMMENT THIS TO DEBUG THE PARSER
+            //t.printAll();
+        }
+        catch(FileNotFoundException e){
             System.out.println("file not found");
         }
 

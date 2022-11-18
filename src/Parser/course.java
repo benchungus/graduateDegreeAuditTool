@@ -41,4 +41,17 @@ public class course {
         earned = e;
         points = p;
     }
+
+    public void printAll(){
+        System.out.println(name);
+        System.out.println(number);
+        System.out.println("INSTRUCTORS: [");
+        for(int i = 0; i < instructors.size(); i++){
+            System.out.println(instructors.get(i));
+        }
+        System.out.println("]");
+        System.out.println(attempted);
+        System.out.println(earned);
+        System.out.println(points);
+    }
 }

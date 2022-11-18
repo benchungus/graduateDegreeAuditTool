@@ -20,4 +20,18 @@ public class transcript {
         totTransGpa = ttg;
         totCombGpa = tcog;
     }
+
+    public void printAll(){
+        System.out.println(name);
+        System.out.println(studentId);
+        for(int i = 0; i < exDegs.size(); i++){
+            exDegs.get(i).printAll();
+        }
+        for(int i = 0; i < sems.size(); i++){
+            sems.get(i).printAll();
+        }
+        totCumGpa.printAll();
+        totTransGpa.printAll();
+        totCombGpa.printAll();
+    }
 }

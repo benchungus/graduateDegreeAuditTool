@@ -16,4 +16,15 @@ public class gpa {
         GPAUts = g;
         Points = p;
     }
+
+    public void printAll(){
+        System.out.println("GPA: (");
+        System.out.println(type);
+        System.out.println(outOf4);
+        System.out.println(attemptedTotal);
+        System.out.println(earnedTotal);
+        System.out.println(GPAUts);
+        System.out.println(Points);
+        System.out.println(")");
+    }
 }
