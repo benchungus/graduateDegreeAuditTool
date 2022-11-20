@@ -5,9 +5,18 @@ public class course {
     String name;
     String number;
     ArrayList<String> instructors;
-    String attempted;
-    String earned;
-    String points;
+    Double attempted;
+    Double earned;
+    Double points;
+
+    public course(String nam, String num, ArrayList<String> ins, Double a, Double e, Double p){
+        name = nam;
+        number = num;
+        instructors = ins;
+        attempted = a;
+        earned = e;
+        points = p;
+    }
 
     public String getName() {
         return name;
@@ -31,15 +40,6 @@ public class course {
 
     public String getPoints() {
         return points;
-    }
-
-    public course(String nam, String num, ArrayList<String> ins, String a, String e, String p){
-        name = nam;
-        number = num;
-        instructors = ins;
-        attempted = a;
-        earned = e;
-        points = p;
     }
 
     public void printAll(){
