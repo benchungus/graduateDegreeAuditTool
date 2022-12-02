@@ -5,16 +5,16 @@ import java.util.ArrayList;
 public class transcript {
     String name;
     String studentId;
-    ArrayList<externalDeg> exDegs;
+    ArrayList<transSem> transSems = new ArrayList<>();
     ArrayList<semester> sems;
     gpa totCumGpa;
     gpa totTransGpa;
     gpa totCombGpa;
 
-    public transcript(String n, String si, ArrayList<externalDeg> ed, ArrayList<semester> s, gpa tcug, gpa ttg, gpa tcog){
+    public transcript(String n, String si, ArrayList<transSem> ts, ArrayList<semester> s, gpa tcug, gpa ttg, gpa tcog){
         name = n;
         studentId = si;
-        exDegs = ed;
+        transSems = ts;
         sems = s;
         totCumGpa = tcug;
         totTransGpa = ttg;
@@ -24,8 +24,8 @@ public class transcript {
     public void printAll(){
         System.out.println(name);
         System.out.println(studentId);
-        for(int i = 0; i < exDegs.size(); i++){
-            exDegs.get(i).printAll();
+        for(int i = 0; i < transSems.size(); i++){
+            transSems.get(i).printAll();
         }
         for(int i = 0; i < sems.size(); i++){
             sems.get(i).printAll();
